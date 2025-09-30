@@ -1,0 +1,1781 @@
+{
+	"info": {
+		"_postman_id": "e5f3f066-de85-4136-9806-c9a96f406f25",
+		"name": "Delphi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46591314",
+		"_collection_link": "https://allwynls.postman.co/workspace/Team-Workspace~6a6d4006-91a6-429a-85cb-595376b9d3ca/collection/46591314-e5f3f066-de85-4136-9806-c9a96f406f25?action=share&source=collection_link&creator=46591314"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "getAdminToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let accessToken = pm.response.json().access_token;",
+									"let tokenExpiry = pm.response.json().expires_in;",
+									"pm.collectionVariables.set(\"authToken\", accessToken);",
+									"pm.collectionVariables.set(\"tokenExpiry\", Date.now() + tokenExpiry * 1000);",
+									"console.log(\"New Admin Auth Token expires in \" + tokenExpiry + \" seconds\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "genesis-command",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "delphiadmin01@example.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password01",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "oa0zRE9RnvRBdYBuGJBNdXIRYN7LJKDE",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://keycloak.internal.k8s.dev.delphi.allwynls.io/realms/genesis-admins/protocol/openid-connect/token",
+							"protocol": "https",
+							"host": [
+								"keycloak",
+								"internal",
+								"k8s",
+								"dev",
+								"delphi",
+								"allwynls",
+								"io"
+							],
+							"path": [
+								"realms",
+								"genesis-admins",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getTestClientToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let accessToken = pm.response.json().access_token;",
+									"let tokenExpiry = pm.response.json().expires_in;",
+									"pm.collectionVariables.set(\"authClientToken\", accessToken);",
+									"pm.collectionVariables.set(\"clientTokenExpiry\", Date.now() + tokenExpiry * 1000);",
+									"console.log(\"New Client Auth Token expires in \" + tokenExpiry + \" seconds\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "delphi-tests",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "gcOr189gglQEVbT62PeJMIT9na6nze8F",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://keycloak.internal.k8s.dev.delphi.allwynls.io/realms/delphi/protocol/openid-connect/token",
+							"protocol": "https",
+							"host": [
+								"keycloak",
+								"internal",
+								"k8s",
+								"dev",
+								"delphi",
+								"allwynls",
+								"io"
+							],
+							"path": [
+								"realms",
+								"delphi",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin-api-gateway",
+			"item": [
+				{
+					"name": "Games",
+					"item": [
+						{
+							"name": "validate Game",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const activationDaysAhead = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);",
+											"const deactivationDaysAhead = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);",
+											"const actDateIsoString = activationDaysAhead.toISOString().split('.')[0] + 'Z';",
+											"const deactDateIsoString = deactivationDaysAhead.toISOString().split('.')[0] + 'Z';",
+											"const randomInt = Math.floor(Math.random() * (99999)) + 1;",
+											"",
+											"pm.collectionVariables.set(\"test_gameId\", randomInt);",
+											"pm.collectionVariables.set(\"activationDate\", actDateIsoString);",
+											"pm.collectionVariables.set(\"deactivationDate\", deactDateIsoString);",
+											"// console.log(\"Generated activation date:\", actDateIsoString);",
+											"// console.log(\"Generated deactivation date:\", deactDateIsoString);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"staticRecord\": {\n        \"record\": {\n            \"gameId\": {{test_gameId}},\n            \"name\": \"Postman_{{$randomWords}}\",\n            \"description\": \"{{$randomPhrase}}\",\n            \"activationDate\": \"{{activationDate}}\",\n            \"deactivationDate\": \"{{deactivationDate}}\",\n            \"type\": \"MAIN\",\n            \"family\": \"LOTTO\",\n            \"multiJurisdictionType\": \"REGIONAL\",\n            \"pricing\": {\n                \"gameOptions\": [\n                {\n                    \"id\": 1,                      // Explicitly binding with gameOptionId: 1\n                    \"name\": \"Main Game\",          // Added a name for clarity\n                    \"unitType\": \"SINGLE_PARTICIPATION\",//ENUM: SINGLE_PARTICIPATION, DRAW, WAGER\n                    \"unitAmount\": 2.00,\n                    \"standAlone\": true,           // Indicates it's the core game, can be bought alone\n                    \"minCost\": 2.00,\n                    \"maxCost\": 20.00\n                }\n                ]\n            },\n            \"wagering\": {\n                \"gameFamilies\": {\n                \"lotto\": {\n                    \"betting\": [\n                    {\n                        \"gameOptionId\": 1,\n                        \"bets\": [\n                        {\n                            \"gameBettingId\": 1,\n                            \"description\": \"Simple Bet\"\n                        }\n                        ],\n                        \"rules\": {\n                        \"basic\": [\n                            {\n                            \"id\": 1,\n                            \"singleCombination\": 5, //1-999\n                            \"rangeFrom\": 1,  //1-9999\n                            \"rangeTo\": 69,  //1-9999\n                            \"minSelection\": 5,  //1-999\n                            \"maxSelection\": 5,  //1-999\n                            \"fullCombination\": false\n                            },\n                            {\n                            \"id\": 2,\n                            \"singleCombination\": 1,\n                            \"rangeFrom\": 1,\n                            \"rangeTo\": 26,\n                            \"minSelection\": 1,\n                            \"maxSelection\": 1,\n                            \"fullCombination\": false\n                            }\n                        ]\n                        }\n                    }\n                    ]\n                }\n                }\n            },\n            \"scheduledDraws\": {\n                \"openedDraws\": 10,\n                \"drawBreak\": 30,\n                \"scheduling\": [{\n                    \"crons\": [\n                    {\n                        \"cronExpression\": \"0 0 12 * * ? 2026\",\n                        \"drawType\": \"DAILY\",\n                        \"description\": \"Daily midday draw\"\n                    },\n                    {\n                        \"cronExpression\": \"0 0 20 * * MON,FRI\",\n                        \"drawType\": \"WEEKLY\",\n                        \"description\": \"Weekday evening draw\"\n                    }\n                    ]\n                }]\n            }\n        },\n        \"metadata\": {\n            \"userId\": \"user_{{$randomInt}}\",\n            \"approverUserId\": \"approver_{{$randomInt}}\"\n        }\n    },\n    \"dynamicRecord\": {\n        \"record\": {\n            \"gameId\": {{test_gameId}},\n            \"activationDate\": \"{{activationDate}}\",\n            \"deactivationDate\": \"{{deactivationDate}}\",\n            \"common\": {\n                \"wagering\":{ \n                    \"wagerLevelLimits\": \n                        {\n                        \"minCost\": 2.00, //0.01-9999999.99\n                        \"maxCost\": 20.00,//0.01-9999999.99\n                        \"minLines\": 1,   //1-999999\n                        \"maxLines\": 10,  //1-999999\n                        \"minBoards\": 1,  //1-100\n                        \"maxBoards\": 10, //1-100\n                        \"minWagerMultiplier\": 1.00,//0.01-999999.99\n                        \"maxWagerMultiplier\": 1.00,//0.01-999999.99\n                        \"minBoardMultiplier\": 1.00,//0.01-999999.99\n                        \"maxBoardMultiplier\": 1.00//0.01-999999.99\n                        },\n                        \"gameOptionLimits\": \n                        [{\n                            \"gameOptionId\": 1,\n                            \"minCost\": 2.00, //0.01-9999999.99\n                            \"maxCost\": 20.00,//0.01-9999999.99\n                            \"minLines\": 1,   //1-999999\n                            \"maxLines\": 10,  //1-999999\n                            \"minBoards\": 1,  //1-100\n                            \"maxBoards\": 10, //1-100\n                            \"minWagerMultiplier\": 1.00,//0.01-999999.99\n                            \"maxWagerMultiplier\": 1.00,//0.01-999999.99\n                            \"minBoardMultiplier\": 1.00,//0.01-999999.99\n                            \"maxBoardMultiplier\": 1.00//0.01-999999.99\n                        }],\n                    \"salesStartOffset\": 179,\n                    \"salesEndOffset\": 383\n                },\n                \"drawing\": {\n                    \"maxConsecutive\": 4,\n                    \"maxAdvance\": 4\n                }\n            }\n        }, \n        \"metadata\": {\n            \"userId\": \"user_{{$randomInt}}\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/validate",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"validate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create Game",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let response = pm.response.json();",
+											"let gameId = response.staticRecord.record.gameId;",
+											"let recordId = response.staticRecord.metadata.recordId;",
+											"// pm.collectionVariables.set(\"test_gameId\", gameId);",
+											"pm.collectionVariables.set(\"test_recordId\", recordId);",
+											"console.log(\"GameId:\", gameId);",
+											"",
+											"let responseBody = pm.response.text();",
+											"pm.collectionVariables.set(\"createGameResponse\", responseBody);"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const activationDaysAhead = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);",
+											"const deactivationDaysAhead = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);",
+											"const actDateIsoString = activationDaysAhead.toISOString().split('.')[0] + 'Z';",
+											"const deactDateIsoString = deactivationDaysAhead.toISOString().split('.')[0] + 'Z';",
+											"const randomInt = Math.floor(Math.random() * (99999)) + 1;",
+											"",
+											"pm.collectionVariables.set(\"test_gameId\", randomInt);",
+											"pm.collectionVariables.set(\"activationDate\", actDateIsoString);",
+											"pm.collectionVariables.set(\"deactivationDate\", deactDateIsoString);",
+											"// console.log(\"Generated activation date:\", actDateIsoString);",
+											"// console.log(\"Generated deactivation date:\", deactDateIsoString);"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"staticRecord\": {\n        \"record\": {\n            \"gameId\": {{test_gameId}},\n            \"name\": \"Postman_{{$randomWords}}\",\n            \"description\": \"{{$randomPhrase}}\",\n            \"activationDate\": \"{{activationDate}}\",\n            \"deactivationDate\": \"{{deactivationDate}}\",\n            \"type\": \"MAIN\",\n            \"family\": \"LOTTO\",\n            \"multiJurisdictionType\": \"REGIONAL\",\n            \"pricing\": {\n                \"gameOptions\": [\n                {\n                    \"id\": 1,                      // Explicitly binding with gameOptionId: 1\n                    \"name\": \"Main Game\",          // Added a name for clarity\n                    \"unitType\": \"SINGLE_PARTICIPATION\",//ENUM: SINGLE_PARTICIPATION, DRAW, WAGER\n                    \"unitAmount\": 2.00,\n                    \"standAlone\": true,           // Indicates it's the core game, can be bought alone\n                    \"minCost\": 2.00,\n                    \"maxCost\": 20.00\n                }\n                ]\n            },\n            \"wagering\": {\n                \"gameFamilies\": {\n                \"lotto\": {\n                    \"betting\": [\n                    {\n                        \"gameOptionId\": 1,\n                        \"bets\": [\n                        {\n                            \"gameBettingId\": 1,\n                            \"description\": \"Simple Bet\"\n                        }\n                        ],\n                        \"rules\": {\n                        \"basic\": [\n                            {\n                            \"id\": 1,\n                            \"singleCombination\": 5, //1-999\n                            \"rangeFrom\": 1,  //1-9999\n                            \"rangeTo\": 69,  //1-9999\n                            \"minSelection\": 5,  //1-999\n                            \"maxSelection\": 5,  //1-999\n                            \"fullCombination\": false\n                            },\n                            {\n                            \"id\": 2,\n                            \"singleCombination\": 1,\n                            \"rangeFrom\": 1,\n                            \"rangeTo\": 26,\n                            \"minSelection\": 1,\n                            \"maxSelection\": 1,\n                            \"fullCombination\": false\n                            }\n                        ]\n                        }\n                    }\n                    ]\n                }\n                }\n            },\n            \"winningNumbersPolicy\": {\n              \"type\": \"DOUBLE_USER_CTRL\",\n              \"variation\": \"DOUBLE_ENTRIES\",\n              \"details\": [\n                {\n                  \"id\": 1,\n                  \"type\": \"NUMERIC\",\n                  \"length\": 5,\n                  \"from\": 1,\n                  \"to\": 69,\n                  \"source\": \"MANUAL\",\n                  \"unique\": true,\n                  \"extraNumbersType\": \"\"\n                },\n                {\n                  \"id\": 2,\n                  \"type\": \"NUMERIC\",\n                  \"length\": 1,\n                  \"from\": 1,\n                  \"to\": 26,\n                  \"source\": \"MANUAL\",\n                  \"unique\": true,\n                  \"extraNumbersType\": \"\"\n                }\n              ]\n            },\n            \"scheduledDraws\": {\n                \"openedDraws\": 10,\n                \"drawBreak\": 15,\n                \"scheduling\": [{\n                    \"crons\": [\n                    {\n                        \"cronExpression\": \"0 0 12 * * ? 2025\",\n                        \"drawType\": \"DAILY\",\n                        \"description\": \"Daily midday draw\"\n                    },\n                    {\n                        \"cronExpression\": \"0 0 20 * * MON-FRI\",\n                        \"drawType\": \"WEEKLY\",\n                        \"description\": \"Weekday evening draw\"\n                    }\n                    ]\n                }]\n            }\n        },\n        \"metadata\": {\n            \"userId\": \"user_{{$randomInt}}\",\n            \"approverUserId\": \"approver_{{$randomInt}}\"\n        }\n    },\n    \"dynamicRecord\": {\n        \"record\": {\n            \"gameId\": {{test_gameId}},\n            \"activationDate\": \"{{activationDate}}\",\n            \"deactivationDate\": \"{{deactivationDate}}\",\n            \"common\": {\n                \"wagering\":{ \n                    \"wagerLevelLimits\": \n                        {\n                        \"minCost\": 2.00, //0.01-9999999.99\n                        \"maxCost\": 20.00,//0.01-9999999.99\n                        \"minLines\": 1,   //1-999999\n                        \"maxLines\": 10,  //1-999999\n                        \"minBoards\": 1,  //1-100\n                        \"maxBoards\": 10, //1-100\n                        \"minWagerMultiplier\": 1.00,//0.01-999999.99\n                        \"maxWagerMultiplier\": 1.00,//0.01-999999.99\n                        \"minBoardMultiplier\": 1.00,//0.01-999999.99\n                        \"maxBoardMultiplier\": 1.00//0.01-999999.99\n                        },\n                        \"gameOptionLimits\": \n                        [{\n                            \"gameOptionId\": 1,\n                            \"minCost\": 2.00, //0.01-9999999.99\n                            \"maxCost\": 20.00,//0.01-9999999.99\n                            \"minLines\": 1,   //1-999999\n                            \"maxLines\": 10,  //1-999999\n                            \"minBoards\": 1,  //1-100\n                            \"maxBoards\": 10, //1-100\n                            \"minWagerMultiplier\": 1.00,//0.01-999999.99\n                            \"maxWagerMultiplier\": 1.00,//0.01-999999.99\n                            \"minBoardMultiplier\": 1.00,//0.01-999999.99\n                            \"maxBoardMultiplier\": 1.00//0.01-999999.99\n                        }],\n                    \"salesStartOffset\": 179,\n                    \"salesEndOffset\": 383\n                },\n                \"drawing\": {\n                    \"maxConsecutive\": 4,\n                    \"maxAdvance\": 4\n                }\n            }\n        }, \n        \"metadata\": {\n            \"userId\": \"user_{{$randomInt}}\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "edit Draft Game",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{createGameResponse}}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "clone Game",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let response = pm.response.json();",
+											"let gameId = response.staticRecord.record.gameId;",
+											"let recordId = response.staticRecord.metadata.recordId;",
+											"// pm.collectionVariables.set(\"test_gameId\", gameId);",
+											"pm.collectionVariables.set(\"test_recordId\", recordId);",
+											"console.log(\"GameId:\", gameId);",
+											"",
+											"let responseBody = pm.response.text();",
+											"pm.collectionVariables.set(\"cloneGameResponse\", responseBody);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_recordId}}/clone",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_recordId}}",
+										"clone"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Games",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games?gameId={{test_gameId}}&status=DRAFT&page=0&size=10&sort=name,asc",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games"
+									],
+									"query": [
+										{
+											"key": "gameId",
+											"value": "{{test_gameId}}"
+										},
+										{
+											"key": "status",
+											"value": "DRAFT"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "10"
+										},
+										{
+											"key": "sort",
+											"value": "name,asc"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Games summary",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/summary?distinctByStatus=true",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"summary"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "ACTIVE",
+											"disabled": true
+										},
+										{
+											"key": "distinctByStatus",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "active Game",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/static-record/{{test_gameId}}/active",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"static-record",
+										"{{test_gameId}}",
+										"active"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "active Games",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/static-record/active",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"static-record",
+										"active"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Game version",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/static-record/{{test_gameId}}/version/1",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"static-record",
+										"{{test_gameId}}",
+										"version",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete Draft Game",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_recordId}}",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_recordId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "publish",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_recordId}}/publish",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_recordId}}",
+										"publish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "activate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_recordId}}/activate",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_recordId}}",
+										"activate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deactivate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_recordId}}/deactivate",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_recordId}}",
+										"deactivate"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Draws",
+					"item": [
+						{
+							"name": "Create Draws",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_gameId}}",
+										"draws"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Draws",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_gameId}}",
+										"draws"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Draw Specific GameId and DrawId",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_gameId}}",
+										"draws"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Game Draw",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_gameId}}",
+										"draws"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Draws Summary",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws/summary",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_gameId}}",
+										"draws",
+										"summary"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Draw Time",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"newDrawTime\": \"2025-08-04T13:00:00Z\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws/{{test_drawId}}/draw-time",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_gameId}}",
+										"draws",
+										"{{test_drawId}}",
+										"draw-time"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Pre-Draw Results",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sales\": {\n        \"wagerLevelStatistics\": [\n            {\n                \"regionId\": 1,\n                \"playedDrawId\": 150,\n                \"status\": 1,\n                \"gameType\": 5,\n                \"wagers\": 150,\n                \"columns\": 140,\n                \"amount\": 1200.5,\n                \"discountAmount\": 50\n            },\n            {\n                \"regionId\": 2,\n                \"playedDrawId\": 350,\n                \"status\": 2,\n                \"gameType\": 6,\n                \"wagers\": 160,\n                \"columns\": 150,\n                \"amount\": 1250.5,\n                \"discountAmount\": 60\n            }\n        ]\n    },\n    \"tierResults\": [\n        {\n            \"tierId\": 44,\n            \"successes\": 515,\n            \"fractionalSuccesses\": 0.00,\n            \"distributedAmount\": 1000.00,\n            \"dividendAmount\": 800.00,\n            \"netDividendAmount\": 750.00,\n            \"taxAmount\": 50.00,\n            \"roundingAmount\": 0.00,\n            \"jackpotAmount\": 5000.00,\n            \"bonus\": 223.11\n        },\n        {\n            \"tierId\": 33,\n            \"successes\": 634,\n            \"fractionalSuccesses\": 1.50,\n            \"distributedAmount\": 2000.00,\n            \"dividendAmount\": 1500.00,\n            \"netDividendAmount\": 1400.00,\n            \"taxAmount\": 100.00,\n            \"roundingAmount\": 0.00,\n            \"jackpotAmount\": 10000.00,\n            \"bonus\": 531.22\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws/{{test_drawId}}/pre-draw",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_gameId}}",
+										"draws",
+										"{{test_drawId}}",
+										"pre-draw"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Close Draws",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws/active/status/close",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_gameId}}",
+										"draws",
+										"active",
+										"status",
+										"close"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Insert Winning Numbers",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"primary\": [\n        {\n\t\t\t\"id\": 1,\n\t\t\t\"data\": [\n\t\t\t\t\"13\",\n                \"25\",\n                \"4\",\n                \"39\",\n\t\t\t\t\"11\"\n            ]\n        },\n        {\n\t\t\t\"id\": 2,\n\t\t\t\"data\": [\n\t\t\t\t\"44\"\n            ]\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws/{{test_drawId}}/winning-numbers",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"games",
+										"{{test_gameId}}",
+										"draws",
+										"{{test_drawId}}",
+										"winning-numbers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Draws [All Games]",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-admin-api-gateway}}/api/v1/draws?dateTimeFrom=2025-08-01T20:00:00Z&dateTimeTo=2025-11-25T20:00:00Z&drawIdFrom=1&drawIdTo=1000&statuses=ACTIVE&page=0&size=10&sort=drawId,asc",
+									"host": [
+										"{{delphi-admin-api-gateway}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"draws"
+									],
+									"query": [
+										{
+											"key": "dateTimeFrom",
+											"value": "2025-08-01T20:00:00Z"
+										},
+										{
+											"key": "dateTimeTo",
+											"value": "2025-11-25T20:00:00Z"
+										},
+										{
+											"key": "drawIdFrom",
+											"value": "1"
+										},
+										{
+											"key": "drawIdTo",
+											"value": "1000"
+										},
+										{
+											"key": "statuses",
+											"value": "ACTIVE"
+										},
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "10"
+										},
+										{
+											"key": "sort",
+											"value": "drawId,asc"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get Draws Summary [All Games]",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{delphi-admin-api-gateway}}/api/v1/draws/summary?dateTimeFrom=2025-08-01T20:00:00Z&dateTimeTo=2025-11-25T20:00:00Z&drawIdFrom=1&drawIdTo=1000&statuses=&page=0&size=10&sort=drawId,desc",
+							"host": [
+								"{{delphi-admin-api-gateway}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"draws",
+								"summary"
+							],
+							"query": [
+								{
+									"key": "dateTimeFrom",
+									"value": "2025-08-01T20:00:00Z"
+								},
+								{
+									"key": "dateTimeTo",
+									"value": "2025-11-25T20:00:00Z"
+								},
+								{
+									"key": "drawIdFrom",
+									"value": "1"
+								},
+								{
+									"key": "drawIdTo",
+									"value": "1000"
+								},
+								{
+									"key": "statuses",
+									"value": ""
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sort",
+									"value": "drawId,desc"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Test",
+			"item": [
+				{
+					"name": "Games",
+					"item": [
+						{
+							"name": "[TEST] Delete Game",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-game-management}}/api/test/games/{{test_recordId}}",
+									"host": [
+										"{{delphi-game-management}}"
+									],
+									"path": [
+										"api",
+										"test",
+										"games",
+										"{{test_recordId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[TEST] Delete all Games",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-game-management}}/api/test/games",
+									"host": [
+										"{{delphi-game-management}}"
+									],
+									"path": [
+										"api",
+										"test",
+										"games"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "[TEST] Delete Games By Game Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-game-management}}/api/test/games/by-game-id/{{test_gameId}}",
+									"host": [
+										"{{delphi-game-management}}"
+									],
+									"path": [
+										"api",
+										"test",
+										"games",
+										"by-game-id",
+										"{{test_gameId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Draws",
+					"item": [
+						{
+							"name": "[TEST] Delete Game Draws",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{authToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{delphi-draw-management}}/api/test/{{test_gameId}}/draws",
+									"host": [
+										"{{delphi-draw-management}}"
+									],
+									"path": [
+										"api",
+										"test",
+										"{{test_gameId}}",
+										"draws"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Wagering",
+					"item": [
+						{
+							"name": "[TEST] Get Wager",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Scheduler",
+					"item": []
+				}
+			]
+		},
+		{
+			"name": "Wagering",
+			"item": [
+				{
+					"name": "Verify Wager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authClientToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"regionId\": 99464,\n    \"channel\": 15710,\n    \"games\": [\n        {\n            \"gameId\": 200,\n            \"boards\": [\n                {\n                    \"id\": 32,\n                    \"areas\": [\n                        {\n                            \"id\": 1,\n                            \"requested\": [\n                                5\n                            ],\n                            \"selections\": [\n                                29,\n                                10,\n                                43,\n                                1,\n                                9\n                            ],\n                            \"options\": [\n                                \"siege\"\n                            ],\n                            \"betTypes\": [\n                                35806\n                            ],\n                            \"quickPickSelections\": 46147,\n                            \"quickPick\": true\n                        },\n                        {\n                            \"id\": 2,\n                            \"requested\": [\n                                3\n                            ],\n                            \"selections\": [\n                                2,\n                                4,\n                                45\n                            ],\n                            \"options\": [\n                                \"mountain\"\n                            ],\n                            \"betTypes\": [\n                                3422\n                            ],\n                            \"quickPickSelections\": 59505,\n                            \"quickPick\": true\n                        }\n                    ],\n                    \"multipliers\": [\n                        2,\n                        2,\n                        3,\n                        1,\n                        2,\n                        3,\n                        1,\n                        1,\n                        3,\n                        3\n                    ],\n                    \"quickPick\": false,\n                    \"options\": [\n                        \"rawhide\"\n                    ],\n                    \"betTypes\": [\n                        47710\n                    ],\n                    \"extended\": {\n                        \"systemId\": 63564,\n                        \"linkedBoards\": [\n                            5536\n                        ]\n                    }\n                }\n            ],\n            \"clientDate\": \"2025-09-19T15:04:51.318047826Z\",\n            \"multipliers\": [\n                3,\n                3,\n                2,\n                1,\n                1,\n                2,\n                1,\n                2,\n                2,\n                3\n            ],\n            \"quickPick\": true,\n            \"options\": [\n                \"cappelletti\"\n            ],\n            \"draws\": {\n                \"multipleDraws\": 3,\n                \"advancedOffset\": 87,\n                \"dates\": [\n                    {\n                        \"date\": \"2025-09-19T15:04:51.329369295Z\",\n                        \"index\": 1816\n                    }\n                ],\n                \"days\": [\n                    {\n                        \"day\": \"reach\",\n                        \"index\": 64923\n                    }\n                ]\n            },\n            \"extra\": {}\n        }\n    ],\n    \"metadata\": {\n        \"retailerMetadata\": {\n            \"retailerId\": 85220,\n            \"terminalId\": 70975,\n            \"userId\": 33031,\n            \"userName\": \"Jeannie Kub\",\n            \"retailerLevel\": \"kinase\"\n        },\n        \"playerMetadata\": {\n            \"playerId\": 44115\n        },\n        \"currency\": \"Papua New Guinean Kina\",\n        \"wagerId\": null\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{delphi-wager-engine}}/api/v1/wagers/verify",
+							"host": [
+								"{{delphi-wager-engine}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"wagers",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Place Wager",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authClientToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"regionId\": 46543,\n    \"channel\": 37379,\n    \"games\": [\n        {\n            \"gameId\": {{test_gameId}},\n            \"boards\": [\n                {\n                    \"id\": 70040,\n                    \"areas\": [\n                        {\n                            \"id\": 1,\n                            \"requested\": [\n                                5\n                            ],\n                            \"selections\": [\n                                18,\n                                24,\n                                51,\n                                9,\n                                50\n                            ],\n                            \"options\": [\n                                \"issue\"\n                            ],\n                            \"betTypes\": [\n                                9498\n                            ],\n                            \"quickPickSelections\": 34188,\n                            \"quickPick\": false\n                        },\n                        {\n                            \"id\": 2,\n                            \"requested\": [\n                                3\n                            ],\n                            \"selections\": [\n                                32,\n                                2,\n                                6\n                            ],\n                            \"options\": [\n                                \"grandson\"\n                            ],\n                            \"betTypes\": [\n                                34159\n                            ],\n                            \"quickPickSelections\": 64658,\n                            \"quickPick\": true\n                        }\n                    ],\n                    \"multipliers\": [\n                        2,\n                        3,\n                        1,\n                        3,\n                        2,\n                        3,\n                        3,\n                        3,\n                        2,\n                        2\n                    ],\n                    \"quickPick\": true,\n                    \"options\": [\n                        \"king\"\n                    ],\n                    \"betTypes\": [\n                        12695\n                    ],\n                    \"extended\": {\n                        \"systemId\": 76468,\n                        \"linkedBoards\": [\n                            24172\n                        ]\n                    }\n                }\n            ],\n            \"clientDate\": \"2025-09-18T13:14:48.894600924Z\",\n            \"multipliers\": [\n                3,\n                2,\n                1,\n                3,\n                1,\n                2,\n                2,\n                3,\n                1,\n                2\n            ],\n            \"quickPick\": true,\n            \"options\": [\n                \"assist\"\n            ],\n            \"draws\": {\n                \"multipleDraws\": 28,\n                \"advancedOffset\": 49,\n                \"dates\": [\n                    {\n                        \"date\": \"2025-09-18T13:14:48.894919497Z\",\n                        \"index\": 22944\n                    }\n                ],\n                \"days\": [\n                    {\n                        \"day\": \"availability\",\n                        \"index\": 74993\n                    }\n                ]\n            },\n            \"extra\": {}\n        }\n    ],\n    \"metadata\": {\n        \"retailerMetadata\": {\n            \"retailerId\": 47910,\n            \"terminalId\": 53864,\n            \"userId\": 66458,\n            \"userName\": \"Wally Kohler\",\n            \"retailerLevel\": \"advancement\"\n        },\n        \"playerMetadata\": {\n            \"playerId\": 56259\n        },\n        \"currency\": \"Turkmenistani Manat\",\n        \"wagerId\": null\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{delphi-wager-engine}}/api/v1/wagers/{{wagerId}}",
+							"host": [
+								"{{delphi-wager-engine}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"wagers",
+								"{{wagerId}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "authToken",
+			"value": ""
+		},
+		{
+			"key": "activationDate",
+			"value": ""
+		},
+		{
+			"key": "deactivationDate",
+			"value": ""
+		},
+		{
+			"key": "test_gameId",
+			"value": ""
+		},
+		{
+			"key": "test_recordId",
+			"value": ""
+		},
+		{
+			"key": "createGameResponse",
+			"value": ""
+		},
+		{
+			"key": "tokenExpiry",
+			"value": ""
+		},
+		{
+			"key": "authClientToken",
+			"value": ""
+		},
+		{
+			"key": "clientTokenExpiry",
+			"value": ""
+		},
+		{
+			"key": "test_drawId",
+			"value": ""
+		},
+		{
+			"key": "cloneGameResponse",
+			"value": ""
+		}
+	]
+}
