@@ -18,16 +18,16 @@ body:form-urlencoded {
   client_secret: oa0zRE9RnvRBdYBuGJBNdXIRYN7LJKDE
 }
 
+assert {
+  res.status: eq 200
+}
+
 script:post-response {
   let accessToken = res.getBody().access_token;
   let tokenExpiry = res.getBody().expires_in;
   bru.setVar("authToken", accessToken);
   bru.setVar("tokenExpiry", Date.now() + tokenExpiry * 1000);
   console.log("New Admin Auth Token expires in " + tokenExpiry + " seconds");
-}
-
-tests {
-  res.getStatus()==201;
 }
 
 settings {

@@ -1,2 +1,4 @@
 # IntelliJ IDEA project files
 .idea/
+
+pnpm-lock.yaml

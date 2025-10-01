@@ -16,6 +16,10 @@ body:form-urlencoded {
   client_secret: gcOr189gglQEVbT62PeJMIT9na6nze8F
 }
 
+assert {
+  res.status: eq 200
+}
+
 script:post-response {
   let accessToken = res.getBody().access_token;
   let tokenExpiry = res.getBody().expires_in;
