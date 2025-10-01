@@ -1,0 +1,27 @@
+meta {
+  name: Games
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{delphi-admin-api-gateway}}/api/v1/games?gameId={{test_gameId}}&status=DRAFT&page=0&size=10&sort=name,asc
+  body: none
+  auth: bearer
+}
+
+params:query {
+  gameId: {{test_gameId}}
+  status: DRAFT
+  page: 0
+  size: 10
+  sort: name,asc
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,0 +1,197 @@
+meta {
+  name: validate Game
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{delphi-admin-api-gateway}}/api/v1/games/validate
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+      "staticRecord": {
+          "record": {
+              "gameId": {{test_gameId}},
+              "name": "Postman_{{$randomWords}}",
+              "description": "{{$randomPhrase}}",
+              "activationDate": "{{activationDate}}",
+              "deactivationDate": "{{deactivationDate}}",
+              "type": "MAIN",
+              "family": "LOTTO",
+              "multiJurisdictionType": "REGIONAL",
+              "pricing": {
+                  "gameOptions": [
+                  {
+                      "id": 1,                      // Explicitly binding with gameOptionId: 1
+                      "name": "Main Game",          // Added a name for clarity
+                      "unitType": "SINGLE_PARTICIPATION",//ENUM: SINGLE_PARTICIPATION, DRAW, WAGER
+                      "unitAmount": 2.00,
+                      "standAlone": true,           // Indicates it's the core game, can be bought alone
+                      "minCost": 2.00,
+                      "maxCost": 20.00
+                  }
+                  ]
+              },
+              "wagering": {
+                  "gameFamilies": {
+                  "lotto": {
+                      "betting": [
+                      {
+                          "gameOptionId": 1,
+                          "bets": [
+                          {
+                              "gameBettingId": 1,
+                              "description": "Simple Bet"
+                          }
+                          ],
+                          "rules": {
+                          "basic": [
+                              {
+                              "id": 1,
+                              "singleCombination": 5, //1-999
+                              "rangeFrom": 1,  //1-9999
+                              "rangeTo": 69,  //1-9999
+                              "minSelection": 5,  //1-999
+                              "maxSelection": 5,  //1-999
+                              "fullCombination": false
+                              },
+                              {
+                              "id": 2,
+                              "singleCombination": 1,
+                              "rangeFrom": 1,
+                              "rangeTo": 26,
+                              "minSelection": 1,
+                              "maxSelection": 1,
+                              "fullCombination": false
+                              }
+                          ]
+                          }
+                      }
+                      ]
+                  }
+                  }
+              },
+              "winningNumbersPolicy": {
+                  "type": "DOUBLE_USER_CTRL",
+                  "variation": "DOUBLE_ENTRIES",
+                  "details": [
+                    {
+                      "id": 1,
+                      "type": "NUMERIC",
+                      "length": 5,
+                      "from": 1,
+                      "to": 69,
+                      "source": "MANUAL",
+                      "unique": true,
+                      "extraNumbersType": ""
+                    },
+                    {
+                      "id": 2,
+                      "type": "NUMERIC",
+                      "length": 1,
+                      "from": 1,
+                      "to": 26,
+                      "source": "MANUAL",
+                      "unique": true,
+                      "extraNumbersType": ""
+                    }
+                  ]
+              },
+              "scheduledDraws": {
+                  "openedDraws": 10,
+                  "drawBreak": 30,
+                  "scheduling": [{
+                      "crons": [
+                      {
+                          "cronExpression": "0 0 12 * * ? 2026",
+                          "drawType": "DAILY",
+                          "description": "Daily midday draw"
+                      },
+                      {
+                          "cronExpression": "0 0 20 * * MON,FRI",
+                          "drawType": "WEEKLY",
+                          "description": "Weekday evening draw"
+                      }
+                      ]
+                  }]
+              }
+          },
+          "metadata": {
+              "userId": "user_{{$randomInt}}",
+              "approverUserId": "approver_{{$randomInt}}"
+          }
+      },
+      "dynamicRecord": {
+          "record": {
+              "gameId": {{test_gameId}},
+              "activationDate": "{{activationDate}}",
+              "deactivationDate": "{{deactivationDate}}",
+              "common": {
+                  "wagering":{ 
+                      "wagerLevelLimits": 
+                          {
+                          "minCost": 2.00, //0.01-9999999.99
+                          "maxCost": 20.00,//0.01-9999999.99
+                          "minLines": 1,   //1-999999
+                          "maxLines": 10,  //1-999999
+                          "minBoards": 1,  //1-100
+                          "maxBoards": 10, //1-100
+                          "minWagerMultiplier": 1.00,//0.01-999999.99
+                          "maxWagerMultiplier": 1.00,//0.01-999999.99
+                          "minBoardMultiplier": 1.00,//0.01-999999.99
+                          "maxBoardMultiplier": 1.00//0.01-999999.99
+                          },
+                          "gameOptionLimits": 
+                          [{
+                              "gameOptionId": 1,
+                              "minCost": 2.00, //0.01-9999999.99
+                              "maxCost": 20.00,//0.01-9999999.99
+                              "minLines": 1,   //1-999999
+                              "maxLines": 10,  //1-999999
+                              "minBoards": 1,  //1-100
+                              "maxBoards": 10, //1-100
+                              "minWagerMultiplier": 1.00,//0.01-999999.99
+                              "maxWagerMultiplier": 1.00,//0.01-999999.99
+                              "minBoardMultiplier": 1.00,//0.01-999999.99
+                              "maxBoardMultiplier": 1.00//0.01-999999.99
+                          }],
+                      "salesStartOffset": 179,
+                      "salesEndOffset": 383
+                  },
+                  "drawing": {
+                      "maxConsecutive": 4,
+                      "maxAdvance": 4
+                  }
+              }
+          }, 
+          "metadata": {
+              "userId": "user_{{$randomInt}}"
+          }
+      }
+  }
+}
+
+script:pre-request {
+  const activationDaysAhead = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const deactivationDaysAhead = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+  const actDateIsoString = activationDaysAhead.toISOString().split('.')[0] + 'Z';
+  const deactDateIsoString = deactivationDaysAhead.toISOString().split('.')[0] + 'Z';
+  const randomInt = Math.floor(Math.random() * (99999)) + 1;
+  
+  bru.setVar("test_gameId", randomInt);
+  bru.setVar("activationDate", actDateIsoString);
+  bru.setVar("deactivationDate", deactDateIsoString);
+  // console.log("Generated activation date:", actDateIsoString);
+  // console.log("Generated deactivation date:", deactDateIsoString);
+}
+
+settings {
+  encodeUrl: true
+}

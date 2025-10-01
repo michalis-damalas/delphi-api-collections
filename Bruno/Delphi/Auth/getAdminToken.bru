@@ -1,0 +1,35 @@
+meta {
+  name: getAdminToken
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://keycloak.internal.k8s.dev.delphi.allwynls.io/realms/genesis-admins/protocol/openid-connect/token
+  body: formUrlEncoded
+  auth: none
+}
+
+body:form-urlencoded {
+  client_id: genesis-command
+  username: delphiadmin01@example.com
+  password: password01
+  grant_type: password
+  client_secret: oa0zRE9RnvRBdYBuGJBNdXIRYN7LJKDE
+}
+
+script:post-response {
+  let accessToken = res.getBody().access_token;
+  let tokenExpiry = res.getBody().expires_in;
+  bru.setVar("authToken", accessToken);
+  bru.setVar("tokenExpiry", Date.now() + tokenExpiry * 1000);
+  console.log("New Admin Auth Token expires in " + tokenExpiry + " seconds");
+}
+
+tests {
+  res.getStatus()==201;
+}
+
+settings {
+  encodeUrl: true
+}

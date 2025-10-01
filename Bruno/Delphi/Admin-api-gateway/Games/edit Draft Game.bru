@@ -1,0 +1,24 @@
+meta {
+  name: edit Draft Game
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{delphi-admin-api-gateway}}/api/v1/games
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {{createGameResponse}}
+  
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,0 +1,30 @@
+meta {
+  name: Get Draws [All Games]
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{delphi-admin-api-gateway}}/api/v1/draws?dateTimeFrom=2025-08-01T20:00:00Z&dateTimeTo=2025-11-25T20:00:00Z&drawIdFrom=1&drawIdTo=1000&statuses=ACTIVE&page=0&size=10&sort=drawId,asc
+  body: none
+  auth: bearer
+}
+
+params:query {
+  dateTimeFrom: 2025-08-01T20:00:00Z
+  dateTimeTo: 2025-11-25T20:00:00Z
+  drawIdFrom: 1
+  drawIdTo: 1000
+  statuses: ACTIVE
+  page: 0
+  size: 10
+  sort: drawId,asc
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+settings {
+  encodeUrl: true
+}

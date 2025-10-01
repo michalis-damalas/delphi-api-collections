@@ -1,0 +1,19 @@
+meta {
+  name: Create Draws
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+settings {
+  encodeUrl: true
+}

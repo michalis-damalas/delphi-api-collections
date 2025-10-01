@@ -1,0 +1,19 @@
+meta {
+  name: publish
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{delphi-admin-api-gateway}}/api/v1/games/{{test_recordId}}/publish
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,0 +1,78 @@
+meta {
+  name: Update Pre-Draw Results
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws/{{test_drawId}}/pre-draw
+  body: json
+  auth: bearer
+}
+
+params:query {
+  ~: 
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+      "sales": {
+          "wagerLevelStatistics": [
+              {
+                  "regionId": 1,
+                  "playedDrawId": 150,
+                  "status": 1,
+                  "gameType": 5,
+                  "wagers": 150,
+                  "columns": 140,
+                  "amount": 1200.5,
+                  "discountAmount": 50
+              },
+              {
+                  "regionId": 2,
+                  "playedDrawId": 350,
+                  "status": 2,
+                  "gameType": 6,
+                  "wagers": 160,
+                  "columns": 150,
+                  "amount": 1250.5,
+                  "discountAmount": 60
+              }
+          ]
+      },
+      "tierResults": [
+          {
+              "tierId": 44,
+              "successes": 515,
+              "fractionalSuccesses": 0.00,
+              "distributedAmount": 1000.00,
+              "dividendAmount": 800.00,
+              "netDividendAmount": 750.00,
+              "taxAmount": 50.00,
+              "roundingAmount": 0.00,
+              "jackpotAmount": 5000.00,
+              "bonus": 223.11
+          },
+          {
+              "tierId": 33,
+              "successes": 634,
+              "fractionalSuccesses": 1.50,
+              "distributedAmount": 2000.00,
+              "dividendAmount": 1500.00,
+              "netDividendAmount": 1400.00,
+              "taxAmount": 100.00,
+              "roundingAmount": 0.00,
+              "jackpotAmount": 10000.00,
+              "bonus": 531.22
+          }
+      ]
+  }
+}
+
+settings {
+  encodeUrl: true
+}

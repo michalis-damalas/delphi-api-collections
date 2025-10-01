@@ -1,0 +1,11 @@
+{
+  "version": "1",
+  "name": "Delphi",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ],
+  "size": 0.03309154510498047,
+  "filesCount": 44
+}

@@ -1,0 +1,19 @@
+meta {
+  name: [TEST] Delete Games By Game Id
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{delphi-game-management}}/api/test/games/by-game-id/{{test_gameId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authClientToken}}
+}
+
+settings {
+  encodeUrl: true
+}

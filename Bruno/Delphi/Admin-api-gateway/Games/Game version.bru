@@ -1,0 +1,19 @@
+meta {
+  name: Game version
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{delphi-admin-api-gateway}}/api/v1/games/static-record/{{test_gameId}}/version/1
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+settings {
+  encodeUrl: true
+}

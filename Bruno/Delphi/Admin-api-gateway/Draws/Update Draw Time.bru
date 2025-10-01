@@ -1,0 +1,29 @@
+meta {
+  name: Update Draw Time
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws/{{test_drawId}}/draw-time
+  body: json
+  auth: bearer
+}
+
+params:query {
+  ~: 
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "newDrawTime": "2025-08-04T13:00:00Z"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

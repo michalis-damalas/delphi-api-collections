@@ -1,0 +1,19 @@
+meta {
+  name: Get Draws Summary
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws/summary
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+settings {
+  encodeUrl: true
+}

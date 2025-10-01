@@ -1,0 +1,24 @@
+meta {
+  name: Games summary
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{delphi-admin-api-gateway}}/api/v1/games/summary?status=DRAFT
+  body: none
+  auth: bearer
+}
+
+params:query {
+  status: DRAFT
+  ~distinctByStatus: true
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+settings {
+  encodeUrl: true
+}

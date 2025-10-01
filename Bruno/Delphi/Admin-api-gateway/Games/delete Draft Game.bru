@@ -1,0 +1,19 @@
+meta {
+  name: delete Draft Game
+  type: http
+  seq: 13
+}
+
+delete {
+  url: {{delphi-admin-api-gateway}}/api/v1/games/{{test_recordId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+settings {
+  encodeUrl: true
+}

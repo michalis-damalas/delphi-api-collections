@@ -1,0 +1,151 @@
+meta {
+  name: Verify Wager
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{delphi-wager-engine}}/api/v1/wagers/verify
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authClientToken}}
+}
+
+body:json {
+  {
+      "regionId": 99464,
+      "channel": 15710,
+      "games": [
+          {
+              "gameId": 200,
+              "boards": [
+                  {
+                      "id": 32,
+                      "areas": [
+                          {
+                              "id": 1,
+                              "requested": [
+                                  5
+                              ],
+                              "selections": [
+                                  29,
+                                  10,
+                                  43,
+                                  1,
+                                  9
+                              ],
+                              "options": [
+                                  "siege"
+                              ],
+                              "betTypes": [
+                                  35806
+                              ],
+                              "quickPickSelections": 46147,
+                              "quickPick": true
+                          },
+                          {
+                              "id": 2,
+                              "requested": [
+                                  3
+                              ],
+                              "selections": [
+                                  2,
+                                  4,
+                                  45
+                              ],
+                              "options": [
+                                  "mountain"
+                              ],
+                              "betTypes": [
+                                  3422
+                              ],
+                              "quickPickSelections": 59505,
+                              "quickPick": true
+                          }
+                      ],
+                      "multipliers": [
+                          2,
+                          2,
+                          3,
+                          1,
+                          2,
+                          3,
+                          1,
+                          1,
+                          3,
+                          3
+                      ],
+                      "quickPick": false,
+                      "options": [
+                          "rawhide"
+                      ],
+                      "betTypes": [
+                          47710
+                      ],
+                      "extended": {
+                          "systemId": 63564,
+                          "linkedBoards": [
+                              5536
+                          ]
+                      }
+                  }
+              ],
+              "clientDate": "2025-09-19T15:04:51.318047826Z",
+              "multipliers": [
+                  3,
+                  3,
+                  2,
+                  1,
+                  1,
+                  2,
+                  1,
+                  2,
+                  2,
+                  3
+              ],
+              "quickPick": true,
+              "options": [
+                  "cappelletti"
+              ],
+              "draws": {
+                  "multipleDraws": 3,
+                  "advancedOffset": 87,
+                  "dates": [
+                      {
+                          "date": "2025-09-19T15:04:51.329369295Z",
+                          "index": 1816
+                      }
+                  ],
+                  "days": [
+                      {
+                          "day": "reach",
+                          "index": 64923
+                      }
+                  ]
+              },
+              "extra": {}
+          }
+      ],
+      "metadata": {
+          "retailerMetadata": {
+              "retailerId": 85220,
+              "terminalId": 70975,
+              "userId": 33031,
+              "userName": "Jeannie Kub",
+              "retailerLevel": "kinase"
+          },
+          "playerMetadata": {
+              "playerId": 44115
+          },
+          "currency": "Papua New Guinean Kina",
+          "wagerId": null
+      }
+  }
+}
+
+settings {
+  encodeUrl: true
+}

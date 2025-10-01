@@ -1,0 +1,31 @@
+meta {
+  name: clone Game
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{delphi-admin-api-gateway}}/api/v1/games/{{test_recordId}}/clone
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+script:post-response {
+  let response = res.getBody();
+  let gameId = response.staticRecord.record.gameId;
+  let recordId = response.staticRecord.metadata.recordId;
+  // // pm.collectionVariables.set("test_gameId", gameId);
+  bru.setVar("test_recordId", recordId);
+  console.log("GameId:", gameId);
+  
+  let responseBody = JSON.stringify(res.getBody());
+  bru.setVar("cloneGameResponse", responseBody);
+}
+
+settings {
+  encodeUrl: true
+}

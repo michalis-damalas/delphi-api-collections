@@ -1,0 +1,29 @@
+meta {
+  name: getTestClientToken
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://keycloak.internal.k8s.dev.delphi.allwynls.io/realms/delphi/protocol/openid-connect/token
+  body: formUrlEncoded
+  auth: none
+}
+
+body:form-urlencoded {
+  client_id: delphi-tests
+  grant_type: client_credentials
+  client_secret: gcOr189gglQEVbT62PeJMIT9na6nze8F
+}
+
+script:post-response {
+  let accessToken = res.getBody().access_token;
+  let tokenExpiry = res.getBody().expires_in;
+  bru.setVar("authClientToken", accessToken);
+  bru.setVar("clientTokenExpiry", Date.now() + tokenExpiry * 1000);
+  console.log("New Client Auth Token expires in " + tokenExpiry + " seconds");
+}
+
+settings {
+  encodeUrl: true
+}

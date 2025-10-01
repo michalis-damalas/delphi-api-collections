@@ -1,0 +1,19 @@
+meta {
+  name: Close Draws
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{delphi-admin-api-gateway}}/api/v1/games/{{test_gameId}}/draws/active/status/close
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+settings {
+  encodeUrl: true
+}
