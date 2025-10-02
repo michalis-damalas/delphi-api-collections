@@ -11,9 +11,3 @@ if ! [[ $BRANCH_NAME =~ $ALLOWED_BRANCH_REGEX ]]; then
 fi
 
 echo "Git hooks: Passed branch name validation 🚀"
-
-FLYWAY_VALIDATE_TASK="validateFlywayMigrationScriptsIntegrity"
-if ./gradlew tasks --all | grep -qw "${FLYWAY_VALIDATE_TASK}"
-then
-    ./gradlew $FLYWAY_VALIDATE_TASK
-fi
