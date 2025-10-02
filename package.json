@@ -5,8 +5,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prepare": "husky",
-    "bru:lint": "node lint.js"
+    "lint": "node lint.js",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
