@@ -1,0 +1,12 @@
+tasks.register('clean', Delete) {
+    delete layout.buildDirectory
+}
+
+tasks.register('installGitHooks', Copy) {
+    description = 'Installs Git hooks from .git-hooks to .git/hooks'
+    from('.git-hooks')
+    into('.git/hooks')
+    eachFile { it.mode = 0755 } // Set executable permission
+}
+
+clean.dependsOn('installGitHooks')
