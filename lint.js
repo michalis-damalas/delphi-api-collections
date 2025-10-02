@@ -9,7 +9,6 @@ const lang = (() => {
     try { return require("@usebruno/lang/v2"); } catch { return require("@usebruno/lang"); }
 })();
 const { bruToJsonV2 } = lang;
-console.log(lang);
 
 function walk(dir, fileList = []) {
     for (const file of fs.readdirSync(dir)) {

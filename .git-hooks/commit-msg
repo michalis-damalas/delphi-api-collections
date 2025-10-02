@@ -1,0 +1,23 @@
+#!/bin/bash
+
+MESSAGE=$(cat $1)
+JIRA_ID=${JIRA_ID:-DL}
+CURRENT_BRANCH=$(git symbolic-ref --short HEAD)
+ALLOWED_MESSAGE_REGEX="^\[(NO-JIRA|${JIRA_ID}-[0-9]+)\]:\ .+(\n\s*\n.+)?$"
+
+# Check if the commit message matches the required pattern
+if [[ "$MESSAGE" =~ $ALLOWED_MESSAGE_REGEX ]]; then
+  JIRA_ID="${BASH_REMATCH[1]}"
+else
+  echo "Error: Commit message does not follow the required format. ❌"
+  echo "Accepted formats: '[${JIRA_ID}-123]: commit message' or '[NO-JIRA]: commit message' or one of the previous followed by an empty line and some more context"
+  exit 1
+fi
+
+# Check if the branch name starts with the Jira ID
+if ! [[ $CURRENT_BRANCH == "$JIRA_ID"* ]]; then
+    echo "Error: Branch name ('$CURRENT_BRANCH') does not start with the Jira ID ('$JIRA_ID') from the commit message. ❌"
+    exit 1
+fi
+
+echo "Git hooks: Passed commit message validation 🚀"
