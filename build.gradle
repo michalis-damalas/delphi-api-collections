@@ -8,5 +8,13 @@ tasks.register('installGitHooks', Copy) {
     into('.git/hooks')
     eachFile { it.mode = 0755 } // Set executable permission
 }
-
 clean.dependsOn('installGitHooks')
+
+tasks.register('lint', Exec) {
+    commandLine 'pnpm', 'lint'
+}
+
+tasks.register('runBruno', Exec) {
+    workingDir './Bruno/Delphi'
+    commandLine 'bru', 'run', '--env', 'Delphi'
+}
