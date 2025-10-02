@@ -15,8 +15,7 @@ Thi repository contains the collection and environment to import Bruno, to inter
 
 ## Instructions for using the collection
 ### Run basic Gradle tasks
-1. ```pnpm bru:lint``` - Lint the collections
-2. ```pnpm bru:run``` - Execute the collection using Bruno.
+1. ```pnpm lint``` - Lint the collections
 
 ## Contributing guidelines
 At the end of each story make a pull request updating the endpoints functionally modified by it.
