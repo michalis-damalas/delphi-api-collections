@@ -17,4 +17,4 @@ jobs:
         with:
           node-version: '20'
       - run: pnpm install
-      - run: node lint.js
+      - run: pnpm bru:lint

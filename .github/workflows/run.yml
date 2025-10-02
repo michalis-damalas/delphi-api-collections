@@ -1,8 +1,7 @@
 name: Run Bruno
 
 on:
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   bruno:
@@ -18,7 +17,7 @@ jobs:
           node-version: 20
 
       - name: Install Bruno CLI
-        run: npm i -g @usebruno/cli
+        run: npm install
 
       - name: Show versions
         run: |
@@ -27,4 +26,4 @@ jobs:
 
       - name: Run Bruno (sit01)
         working-directory: ./Bruno/Delphi
-        run: bru run --env Delphi
+        run: bru:run
