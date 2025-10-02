@@ -27,4 +27,5 @@ jobs:
           bru --version
 
       - name: Run Bruno (sit01)
-        run: bru run --working-dir ./Bruno
+        working-directory: ./Bruno/Delphi
+        run: bru run --env Delphi
